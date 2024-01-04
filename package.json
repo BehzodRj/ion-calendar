@@ -42,7 +42,7 @@
     "date-range"
   ],
   "author": "BRJKhalif",
-  "license": "MIT",
+  "license": "",
   "peerDependencies": {
     "moment": "^2.19.3"
   },
