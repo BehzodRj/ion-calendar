@@ -1,5 +1,5 @@
 {
-  "name": "ion-calendar",
+  "name": "brj-calendar",
   "version": "3.5.0",
   "description": "A date picker component for ionic ",
   "main": "./dist/index.js",
