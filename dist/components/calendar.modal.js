@@ -25,7 +25,10 @@ var CalendarModal = /** @class */ (function () {
         this.calSvc = calSvc;
         this.ionPage = true;
         this.datesTemp = [null, null];
+        this.myDate = [];
         this._scrollLock = true;
+        this.MONTH_DATE_FORMAT = 'MMMM yyyy';
+        this.flightTitle = ""
     }
     CalendarModal.prototype.ngOnInit = function () {
         this.init();
@@ -87,7 +90,14 @@ var CalendarModal = /** @class */ (function () {
     CalendarModal.prototype.onChange = function (data) {
         var _a = this._d, pickMode = _a.pickMode, autoDone = _a.autoDone;
         this.datesTemp = data;
-        this.ref.detectChanges();
+        this.myDate = this.calSvc.wrapResult(this.datesTemp, pickMode)
+        if(this.datesTemp[0] != null && this.datesTemp[1] == null) {
+            this.flightTitle = 'Только туда'
+        }
+        else if(this.datesTemp[0] != null && this.datesTemp[1] != null) {
+            this.flightTitle = 'Туда и обратно'
+        }
+
         if (pickMode !== config_1.pickModes.MULTI && autoDone && this.canDone()) {
             this.done();
         }
@@ -104,15 +114,17 @@ var CalendarModal = /** @class */ (function () {
         if (!Array.isArray(this.datesTemp)) {
             return false;
         }
-        var _a = this._d, pickMode = _a.pickMode, defaultEndDateToStartDate = _a.defaultEndDateToStartDate;
+        var _a = this._d, pickMode = _a.pickMode;
         switch (pickMode) {
             case config_1.pickModes.SINGLE:
                 return !!(this.datesTemp[0] && this.datesTemp[0].time);
             case config_1.pickModes.RANGE:
-                if (defaultEndDateToStartDate) {
-                    return !!(this.datesTemp[0] && this.datesTemp[0].time);
+                if (this.datesTemp[0] != null) {
+                    return !!(this.datesTemp[0]) && !!(this.datesTemp[0].time);
+                } 
+                else if (this.datesTemp[0] != null && this.datesTemp[1] != null) {
+                    return !!(this.datesTemp[0] && this.datesTemp[1]) && !!(this.datesTemp[0].time && this.datesTemp[1].time);
                 }
-                return !!(this.datesTemp[0] && this.datesTemp[1]) && !!(this.datesTemp[0].time && this.datesTemp[1].time);
             case config_1.pickModes.MULTI:
                 return this.datesTemp.length > 0 && this.datesTemp.every(function (e) { return !!e && !!e.time; });
             default:
@@ -244,8 +256,8 @@ var CalendarModal = /** @class */ (function () {
     CalendarModal = __decorate([
         core_1.Component({
             selector: 'ion-calendar-modal',
-            template: "\n    <ion-header>\n      <ion-toolbar [color]=\"_d.color\">\n          <ion-buttons slot=\"start\">\n              <ion-button type='button' slot=\"icon-only\" fill=\"clear\" (click)=\"onCancel()\">\n              <span *ngIf=\"_d.closeLabel !== '' && !_d.closeIcon\">{{ _d.closeLabel }}</span>\n              <ion-icon *ngIf=\"_d.closeIcon\" name=\"close\"></ion-icon>\n            </ion-button>\n          </ion-buttons>\n\n          <ion-title>{{ _d.title }}</ion-title>\n\n          <ion-buttons slot=\"end\">\n            <ion-button type='button' *ngIf=\"!!_d.clearLabel\" fill=\"clear\" [disabled]=\"!canClear()\" (click)=\"clear()\">\n              <span *ngIf=\"_d.clearLabel !== ''\">{{ _d.clearLabel }}</span>\n            </ion-button>\n            <ion-button type='button' slot=\"icon-only\" *ngIf=\"!_d.autoDone\" fill=\"clear\" [disabled]=\"!canDone()\" (click)=\"done()\">\n              <span *ngIf=\"_d.doneLabel !== '' && !_d.doneIcon\">{{ _d.doneLabel }}</span>\n              <ion-icon *ngIf=\"_d.doneIcon\" name=\"checkmark\"></ion-icon>\n            </ion-button>\n          </ion-buttons>\n      </ion-toolbar>\n\n      <ng-content select=\"[sub-header]\"></ng-content>\n\n      <ion-calendar-week\n        [color]=\"_d.color\"\n        [weekArray]=\"_d.weekdays\"\n        [weekStart]=\"_d.weekStart\">\n      </ion-calendar-week>\n\n    </ion-header>\n\n    <ion-content (ionScroll)=\"onScroll($event)\" class=\"calendar-page\" [scrollEvents]=\"true\"\n                 [ngClass]=\"{'multi-selection': _d.pickMode === 'multi'}\">\n\n      <div #months>\n        <ng-template ngFor let-month [ngForOf]=\"calendarMonths\" [ngForTrackBy]=\"trackByIndex\" let-i=\"index\">\n          <div class=\"month-box\" [attr.id]=\"'month-' + i\">\n            <h4 class=\"text-center month-title\">{{ _monthFormat(month.original.date) }}</h4>\n            <ion-calendar-month [month]=\"month\"\n                                [pickMode]=\"_d.pickMode\"\n                                [isSaveHistory]=\"_d.isSaveHistory\"\n                                [id]=\"_d.id\"\n                                [color]=\"_d.color\"\n                                (change)=\"onChange($event)\"\n                                [(ngModel)]=\"datesTemp\">\n            </ion-calendar-month>\n          </div>\n        </ng-template>\n\n      </div>\n\n      <ion-infinite-scroll threshold=\"25%\" (ionInfinite)=\"nextMonth($event)\">\n        <ion-infinite-scroll-content></ion-infinite-scroll-content>\n      </ion-infinite-scroll>\n\n    </ion-content>\n  ",
-            styles: [":host ion-select {\n  max-width: unset; }\n  :host ion-select .select-icon > .select-icon-inner,\n  :host ion-select .select-text {\n    color: #fff !important; }\n  :host ion-select.select-ios {\n    max-width: unset; }\n\n:host .calendar-page {\n  background-color: #fbfbfb; }\n\n:host .month-box {\n  display: inline-block;\n  width: 100%;\n  padding-bottom: 1em;\n  border-bottom: 1px solid #f1f1f1; }\n\n:host h4 {\n  font-weight: 400;\n  font-size: 1.1rem;\n  display: block;\n  text-align: center;\n  margin: 1rem 0 0;\n  color: #929292; }\n"]
+            template: "\n    <ion-header class='ion-no-border'>\n      <ion-toolbar>\n          <ion-buttons slot=\"start\">\n              <ion-button type='button' slot=\"icon-only\" fill=\"clear\" (click)=\"onCancel()\">\n              <span *ngIf=\"_d.closeLabel !== '' && !_d.closeIcon\">{{ _d.closeLabel }}</span>\n              <ion-icon *ngIf=\"_d.closeIcon\" name=\"close\"></ion-icon>\n            </ion-button>\n          </ion-buttons>\n\n          <ion-title mode='ios'>{{ myDate?.from?.dateObj | date: 'd MMMM' }} - {{ myDate?.to?.dateObj | date: 'd MMMM' }}</ion-title>\n\n          <ion-buttons slot=\"end\">\n      </ion-buttons>\n      </ion-toolbar>\n\n      <ng-content select=\"[sub-header]\"></ng-content>\n\n      <ion-calendar-week\n        [color]=\"_d.color\"\n        [weekArray]=\"_d.weekdays\"\n        [weekStart]=\"_d.weekStart\">\n      </ion-calendar-week>\n\n    </ion-header>\n\n    <ion-content (ionScroll)=\"onScroll($event)\" class=\"calendar-page\" [scrollEvents]=\"true\"\n                 [ngClass]=\"{'multi-selection': _d.pickMode === 'multi'}\">\n\n      <div #months>\n        <ng-template ngFor let-month [ngForOf]=\"calendarMonths\" [ngForTrackBy]=\"trackByIndex\" let-i=\"index\">\n          <div class=\"month-box\" [attr.id]=\"'month-' + i\">\n            <h4 class=\"text-center month-title\">{{ _monthFormat(month.original.date) | date:MONTH_DATE_FORMAT }}</h4>\n            <ion-calendar-month [month]=\"month\"\n                                [pickMode]=\"_d.pickMode\"\n                                [isSaveHistory]=\"_d.isSaveHistory\"\n                                [id]=\"_d.id\"\n                                [color]=\"_d.color\"\n                                (change)=\"onChange($event)\"\n                                [(ngModel)]=\"datesTemp\">\n            </ion-calendar-month>\n          </div>\n        </ng-template>\n\n      </div>\n\n      <ion-infinite-scroll threshold=\"25%\" (ionInfinite)=\"nextMonth($event)\">\n        <ion-infinite-scroll-content></ion-infinite-scroll-content>\n      </ion-infinite-scroll>\n\n      <ion-button class='calendar-done__button' *ngIf=\"canDone()\" fill=\"clear\" (click)=\"done()\">{{ flightTitle }}</ion-button>\n      </ion-content>\n ",
+            styles: [":host ion-select {\n  max-width: unset; }\n  :host ion-select .select-icon > .select-icon-inner,\n  :host ion-select .select-text {\n    color: #000 !important; }\n  :host ion-select.select-ios {\n    max-width: unset; }\n\n:host .calendar-page {\n  background-color: #fbfbfb; }\n\n:host .month-box {\n  display: inline-block;\n  width: 100%;\n  padding-bottom: 1em;\n  border-bottom: 1px solid #f1f1f1; }\n\n:host h4 {\n  font-weight: 400;\n  font-size: 1.1rem;\n  display: block;\n  text-align: center;\n  margin: 1rem 0 0;\n  color: #929292;\n  text-transform: capitalize; }\n"]
         }),
         __metadata("design:paramtypes", [core_1.Renderer2,
             core_1.ElementRef,

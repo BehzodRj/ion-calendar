@@ -223,10 +223,16 @@ var CalendarService = /** @class */ (function () {
                 result = this.multiFormat(original[0].time);
                 break;
             case config_1.pickModes.RANGE:
-                result = {
-                    from: this.multiFormat(original[0].time),
-                    to: this.multiFormat((original[1] || original[0]).time),
-                };
+                if(original[0] != null && original[1] == null) {
+                    result = {
+                        from: this.multiFormat(original[0].time),
+                    };
+                } else if(original[0] != null && original[1] != null) {
+                    result = {
+                        from: this.multiFormat(original[0].time),
+                        to: this.multiFormat(original[1].time),
+                    };
+                }
                 break;
             case config_1.pickModes.MULTI:
                 result = original.map(function (e) { return _this.multiFormat(e.time); });
