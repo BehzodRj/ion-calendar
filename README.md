@@ -1,9 +1,4 @@
-# 📅 ion2-calendar
-
-[![Build Status](https://travis-ci.org/HsuanXyz/ion2-calendar.svg?branch=master)](https://travis-ci.org/HsuanXyz/ion2-calendar)
-[![Dependency Status](https://david-dm.org/HsuanXyz/ion2-calendar.svg)](https://david-dm.org/HsuanXyz/ion2-calendar)
-[![NPM version][npm-image]][npm-url]
-[![MIT License][license-image]][license-url]
+# 📅 ion-calendar
 
 - Support date range.
 - Support multi date.
