@@ -11,17 +11,13 @@
 # Support
 
 - ionic-angular `^3.0.0` [2.x](https://github.com/HsuanXyz/ion2-calendar/tree/v2)
-- @ionic/angular `4.0.0`
-
-# Demo
-
-live demo [click me](https://www-yefjsqmtmv.now.sh/).
+- @ionic/angular `4.0.0`  
 
 # Usage
 
 ### Installation
 
-`$ npm install ion2-calendar moment --save`
+`$ npm i git+https://github.com/BehzodRj/ion-calendar.git`
 
 ### Import module
 
