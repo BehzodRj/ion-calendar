@@ -6,7 +6,7 @@
   "typings": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/HsuanXyz/ion2-calendar.git"
+    "url": "https://github.com/BehzodRj/ion-calendar.git"
   },
   "devDependencies": {
     "@angular/common": "7.1.4",
